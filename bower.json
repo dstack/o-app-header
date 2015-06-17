@@ -1,0 +1,13 @@
+{
+  "name": "o-app-header",
+  "dependencies": {},
+  "main": [
+    "main.scss",
+    "main.js"
+  ],
+  "ignore": [
+    "examples",
+    "test",
+    ".gitignore"
+  ]
+}
