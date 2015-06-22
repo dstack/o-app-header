@@ -1,4 +1,4 @@
-# o-app-header
+# o-app-header [![Build Status](https://travis-ci.org/Pearson-Higher-Ed/o-app-header.svg?branch=master)](https://travis-ci.org/Pearson-Higher-Ed/o-app-header)
 
 ## Initialization
 
