@@ -1,11 +1,11 @@
 // External imports
-
-// @import 'o-grid/main';
+@import 'o-header/main';
+@import 'o-dropdown-menu/main';
 
 // Internal imports
 @import 'src/scss/variables';
 @import 'src/scss/mixins';
 
 @if not $o-app-header-is-silent {
-	@include oAppHeaderHello(world of Origami);
+
 }

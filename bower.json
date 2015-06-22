@@ -1,6 +1,8 @@
 {
   "name": "o-app-header",
-  "dependencies": {},
+  "dependencies": {
+    "object-assign": "~3.0.0"
+  },
   "main": [
     "main.scss",
     "main.js"
