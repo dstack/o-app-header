@@ -1,0 +1,11 @@
+// TEMP
+$o-fonts-path: '/bower_components/o-fonts-assets/';
+$o-icons-path: '/bower_components/o-icons/assets/';
+// END TEMP
+
+@include oFontsInclude(HelveticaNeue);
+@include oIconsInclude(oc-icons);
+
+.o-app-header {
+	font-family: oFontsGetFontFamilyWithFallbacks(HelveticaNeue);
+}

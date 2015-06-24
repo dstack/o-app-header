@@ -1,7 +1,10 @@
 // External imports
 @import 'o-header/main';
 @import 'o-dropdown-menu/main';
+@import 'o-fonts/main';
+@import 'o-icons/main';
 
 // Internal imports
 @import 'src/scss/variables';
 @import 'src/scss/mixins';
+@import 'src/scss/app-header';

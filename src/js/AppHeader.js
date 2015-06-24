@@ -1,5 +1,6 @@
 'use strict';
 
+var Collapse = require('o-collapse');
 var assign = require('object-assign/index');
 var forEach = require('./utils').forEach;
 
@@ -61,7 +62,11 @@ var AppHeader = {
 			headerEl.setAttribute('data-o-component', 'o-header');
 			headerEl.setAttribute('aria-role', 'banner');
 			headerEl.classList.add('o-header');
+			headerEl.classList.add('o-app-header');
 			headerEl.innerHTML = requireText('../html/header.html');
+
+			// Collapse
+			new Collapse(headerEl.querySelector('[data-o-component="o-collapse"]'));
 
 			// Links
 			forEach(headerEl.querySelectorAll('[data-link]'), function (idx, item) {
