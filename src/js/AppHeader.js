@@ -1,6 +1,7 @@
 'use strict';
 
 var Collapse = require('o-collapse');
+var DropdownMenu = require('o-dropdown-menu');
 var assign = require('object-assign/index');
 var forEach = require('./utils').forEach;
 
@@ -12,9 +13,9 @@ var AppHeader = {
 	},
 
 	linkMap: {
+		'my-courses': '{consoleBaseUrl}/console/home',
 		'my-account': '{consoleBaseUrl}/account/manage/account',
-		'tech-support': 'https://247pearsoned.custhelp.com/app/answers/detail/a_id/13175',
-		'my-courses': '{consoleBaseUrl}/console/home'
+		'tech-support': 'https://247pearsoned.custhelp.com/app/answers/detail/a_id/13175'
 	},
 
 	init: function (element, options) {
@@ -26,6 +27,7 @@ var AppHeader = {
 		if (!(element instanceof HTMLElement)) element = document.querySelector(element);
 
 		var settings = getSettings();
+		var session = window[settings.sessionGlobal];
 		var headerEl = constructHeaderEl();
 
 		if (element === document.body) {
@@ -56,6 +58,16 @@ var AppHeader = {
 				.replace('{consoleBaseUrl}', settings.consoleBaseUrl);
 		}
 
+		function handleSignIn(e) {
+			e.preventDefault();
+			session.login(window.location.href);
+		}
+
+		function handleSignOut(e) {
+			e.preventDefault();
+			session.logout(window.location.href);
+		}
+
 		function constructHeaderEl() {
 			var headerEl = document.createElement('header');
 
@@ -72,6 +84,11 @@ var AppHeader = {
 			forEach(headerEl.querySelectorAll('[data-link]'), function (idx, item) {
 				item.href = resolveLink(item.getAttribute('data-link'));
 			});
+
+			headerEl.querySelector('[data-link="sign-in"]').addEventListener('click', handleSignIn);
+			headerEl.querySelector('[data-link="sign-out"]').addEventListener('click', handleSignOut);
+
+			DropdownMenu.init(headerEl);
 
 			return headerEl;
 		}

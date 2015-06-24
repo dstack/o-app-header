@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach*/
+/*global sinon, describe, it, before, beforeEach*/
 'use strict';
 
 var expect = require('expect.js');
@@ -7,8 +7,25 @@ var AppHeader = require('./../src/js/AppHeader');
 
 describe('AppHeader', function () {
 
+	var sandbox, session;
+
+	before(function () {
+		sandbox = sinon.sandbox.create();
+		session = window.session = {
+			login: function (redirectUrl) {},
+			logout: function (redirectUrl) {}
+		};
+
+		var configEl = document.createElement('script');
+		configEl.setAttribute('data-o-app-header-config', '');
+		configEl.type = 'application/json';
+		configEl.innerHTML = JSON.stringify({ sessionGlobal: 'session' });
+		document.head.appendChild(configEl);
+	});
+
 	beforeEach(function () {
 		document.body.innerHTML = '';
+		sandbox.restore();
 	});
 
 	describe('o.DOMContentLoaded', function () {
@@ -100,7 +117,55 @@ describe('AppHeader', function () {
 
 	});
 
+	describe('session', function () {
+
+		var headerEl;
+
+		beforeEach(function () {
+			AppHeader.init();
+			headerEl = getHeaderEl();
+		});
+
+		it('should sign the user in when the Sign In nav item is clicked', function (done) {
+			var signInEl = headerEl.querySelector('[data-link="sign-in"]');
+			sinon.stub(session, 'login');
+
+			dispatchEvent(signInEl, 'click');
+
+			setTimeout(function () {
+				expect(session.login.calledWith(window.location.href)).to.be(true);
+				done();
+			});
+		});
+
+		it('should sign the user out when the Sign Out dropdown menu item is clicked', function (done) {
+			var signOutEl = headerEl.querySelector('[data-link="sign-out"]');
+			sinon.stub(session, 'logout');
+
+			dispatchEvent(signOutEl, 'click');
+
+			setTimeout(function () {
+				expect(session.logout.calledWith(window.location.href)).to.be(true);
+				done();
+			});
+		});
+
+	});
+
 });
+
+function dispatchEvent(element, name, data) {
+	if (document.createEvent && element.dispatchEvent) {
+		var event = document.createEvent('Event');
+		event.initEvent(name, true, true);
+
+		if (data) {
+			event.detail = data;
+		}
+
+		element.dispatchEvent(event);
+	}
+}
 
 function getHeaderEl() {
 	return document.querySelector('[data-o-component="o-header"]');

@@ -10,13 +10,13 @@ module.exports = function(config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['mocha', 'browserify'],
+		frameworks: ['mocha', 'sinon', 'browserify'],
 
 
 		// list of files / patterns to load in the browser
 		files: [
 			// Polyfill PhantomJS as it's a similar Webkit version
-			'http://polyfill.webservices.ft.com/v1/polyfill.js?ua=safari/4',
+			'http://polyfill.webservices.ft.com/v1/polyfill.js?ua=safari/4&features=default,WeakMap',
 			'test/*.test.js'
 		],
 
