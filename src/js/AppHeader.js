@@ -30,6 +30,9 @@ var AppHeader = {
 		var session = window[settings.sessionGlobal];
 		var headerEl = constructHeaderEl();
 
+		setState('initializing');
+		initSession();
+
 		if (element === document.body) {
 			element.insertBefore(headerEl, element.firstChild);
 		} else {
@@ -58,16 +61,6 @@ var AppHeader = {
 				.replace('{consoleBaseUrl}', settings.consoleBaseUrl);
 		}
 
-		function handleSignIn(e) {
-			e.preventDefault();
-			session.login(window.location.href);
-		}
-
-		function handleSignOut(e) {
-			e.preventDefault();
-			session.logout(window.location.href);
-		}
-
 		function constructHeaderEl() {
 			var headerEl = document.createElement('header');
 
@@ -91,6 +84,67 @@ var AppHeader = {
 			DropdownMenu.init(headerEl);
 
 			return headerEl;
+		}
+
+		function setState(state) {
+			var selector = '[data-show="state:signed-in"],[data-show="state:signed-out"]';
+			var elements = headerEl.querySelectorAll(selector);
+
+			if (state === 'initializing') {
+				forEach(elements, function (idx, el) {
+					el.style.display = 'none';
+				});
+			} else if (state === 'signed-in') {
+				forEach(elements, function (idx, el) {
+					el.style.display = el.getAttribute('data-show') === 'state:signed-in' ? '' : 'none';
+				});
+			} else if (state === 'signed-out') {
+				forEach(elements, function (idx, el) {
+					el.style.display = el.getAttribute('data-show') === 'state:signed-out' ? '' : 'none';
+				});
+			}
+		}
+
+		function initSession() {
+			var sessionState = session.hasValidSession();
+
+			if (sessionState === session.Success) {
+				setState('signed-in');
+			} else if (sessionState === session.NoSession || sessionState === session.NoToken) {
+				setState('signed-out');
+			}
+
+			session.on(session.SessionStateKnownEvent, handleSessionStateKnown);
+			session.on(session.LoginEvent, handleSessionLogin);
+			session.on(session.LogoutEvent, handleSessionLogout);
+		}
+
+		function handleSignIn(e) {
+			e.preventDefault();
+			session.login(window.location.href);
+		}
+
+		function handleSignOut(e) {
+			e.preventDefault();
+			session.logout(window.location.href);
+		}
+
+		function handleSessionStateKnown(e) {
+			if (session.hasValidSession()) {
+				// TODO: get username from profile
+				setState('signed-in');
+			} else {
+				setState('signed-out');
+			}
+		}
+
+		function handleSessionLogin(e) {
+			// TODO: get username from profile
+			setState('signed-in');
+		}
+
+		function handleSessionLogout(e) {
+			setState('signed-out');
 		}
 
 	}

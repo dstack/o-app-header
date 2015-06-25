@@ -2,8 +2,8 @@
 'use strict';
 
 var expect = require('expect.js');
-
-var AppHeader = require('./../src/js/AppHeader');
+var forEach = require('../src/js/utils').forEach;
+var AppHeader = require('../src/js/AppHeader');
 
 describe('AppHeader', function () {
 
@@ -13,7 +13,15 @@ describe('AppHeader', function () {
 		sandbox = sinon.sandbox.create();
 		session = window.session = {
 			login: function (redirectUrl) {},
-			logout: function (redirectUrl) {}
+			logout: function (redirectUrl) {},
+			hasValidSession: function (gracePeriodSeconds) {},
+			on: function (eventType, handler) {},
+			off: function (eventType, handler) {},
+			// States
+			Success: 'success',
+			NoToken: 'notoken',
+			NoSession: 'nosession',
+			Unknown: 'unknown'
 		};
 
 		var configEl = document.createElement('script');
@@ -119,16 +127,11 @@ describe('AppHeader', function () {
 
 	describe('session', function () {
 
-		var headerEl;
-
-		beforeEach(function () {
-			AppHeader.init();
-			headerEl = getHeaderEl();
-		});
-
 		it('should sign the user in when the Sign In nav item is clicked', function (done) {
+			AppHeader.init();
+			var headerEl = getHeaderEl();
 			var signInEl = headerEl.querySelector('[data-link="sign-in"]');
-			sinon.stub(session, 'login');
+			sandbox.stub(session, 'login');
 
 			dispatchEvent(signInEl, 'click');
 
@@ -139,8 +142,10 @@ describe('AppHeader', function () {
 		});
 
 		it('should sign the user out when the Sign Out dropdown menu item is clicked', function (done) {
+			AppHeader.init();
+			var headerEl = getHeaderEl();
 			var signOutEl = headerEl.querySelector('[data-link="sign-out"]');
-			sinon.stub(session, 'logout');
+			sandbox.stub(session, 'logout');
 
 			dispatchEvent(signOutEl, 'click');
 
@@ -148,6 +153,38 @@ describe('AppHeader', function () {
 				expect(session.logout.calledWith(window.location.href)).to.be(true);
 				done();
 			});
+		});
+
+		it('should be in the initializing state when the session state is not Success, NoToken, or NoSession', function () {
+			sandbox.stub(session, 'hasValidSession').returns(session.Unknown);
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'initializing')).to.be(true);
+		});
+
+		it('should be in the signed in state when the session state is Success', function () {
+			sandbox.stub(session, 'hasValidSession').returns(session.Success);
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-in')).to.be(true);
+		});
+
+		it('should be in the signed out state when the session state is NoSession', function () {
+			sandbox.stub(session, 'hasValidSession').returns(session.NoSession);
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-out')).to.be(true);
+		});
+
+		it('should be in the signed out state when the session state is NoToken', function () {
+			sandbox.stub(session, 'hasValidSession').returns(session.NoToken);
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-out')).to.be(true);
 		});
 
 	});
@@ -169,4 +206,28 @@ function dispatchEvent(element, name, data) {
 
 function getHeaderEl() {
 	return document.querySelector('[data-o-component="o-header"]');
+}
+
+function isHeaderInState(headerEl, state) {
+	var selector = '[data-show="state:signed-in"],[data-show="state:signed-out"]';
+	var elements = headerEl.querySelectorAll(selector);
+	var isInState = true;
+
+	if (state === 'initializing') {
+		forEach(elements, function (idx, element) {
+			if (element.style.display !== 'none') isInState = false;
+		});
+	} else if (state === 'signed-in') {
+		forEach(elements, function (idx, element) {
+			if (element.getAttribute('data-show') === 'state:signed-in' && element.style.display === 'none') isInState = false;
+			if (element.getAttribute('data-show') === 'state:signed-out' && element.style.display !== 'none') isInState = false;
+		});
+	} else if (state === 'signed-out') {
+		forEach(elements, function (idx, element) {
+			if (element.getAttribute('data-show') === 'state:signed-in' && element.style.display !== 'none') isInState = false;
+			if (element.getAttribute('data-show') === 'state:signed-out' && element.style.display === 'none') isInState = false;
+		});
+	}
+
+	return isInState;
 }
