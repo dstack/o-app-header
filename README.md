@@ -27,7 +27,7 @@ Configuration properties may be passed as an object argument to the `init()` met
 <script data-o-app-header-config type="application/json">
   {
   	"consoleBaseUrl": "https://...",
-  	"sessionGlobal": "Session"
+  	"session": "Session"
   }
 </script>
 ```
@@ -44,10 +44,10 @@ Refer to the [options object](#api-methods-init) for a list of properties.
 - `element`: an `HTMLElement` or selector string. The selected element will be replaced with the `header` element unless it is `document.body`, in which case the header will be preprended to the body content.
 - `options`: an object with the following properties:
 
-| Property                 | Description                       |
-|--------------------------|-----------------------------------|
-| consoleBaseUrl           | The Console application base URL (default: https://console.pearson.com) |
-| sessionGlobal            ||
+| Property                 | Type                 | Description                       |
+|--------------------------|----------------------|-----------------------------------|
+| consoleBaseUrl           | `string`             | The Console application base URL (default: https://console.pearson.com) |
+| session                  | `string` or `Object` | The session object, or the name of the session object in the global scope. |
 
 ## Browser support
 

@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var configEl = document.createElement('script');
 	configEl.setAttribute('data-o-app-header-config', '');
 	configEl.type = 'application/json';
-	configEl.innerHTML = JSON.stringify({ sessionGlobal: 'session' });
+	configEl.innerHTML = JSON.stringify({ session: 'session' });
 	document.head.appendChild(configEl);
 
 	document.dispatchEvent(new CustomEvent('o.DOMContentLoaded'));

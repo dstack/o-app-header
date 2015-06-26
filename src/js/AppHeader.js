@@ -8,7 +8,7 @@ var forEach = require('./utils').forEach;
 var AppHeader = {
 
 	defaultSettings: {
-		sessionGlobal: 'piSession',
+		session: 'piSession',
 		consoleBaseUrl: 'https://console.pearson.com'
 	},
 
@@ -27,7 +27,7 @@ var AppHeader = {
 		if (!(element instanceof HTMLElement)) element = document.querySelector(element);
 
 		var settings = getSettings();
-		var session = window[settings.sessionGlobal];
+		var session = (typeof settings.session === 'string') ? window[settings.session] : settings.session;
 		var headerEl = constructHeaderEl();
 
 		setState('initializing');
