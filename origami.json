@@ -4,6 +4,13 @@
     "origamiVersion": 1,
     "support": "https://github.com/Pearson-Higher-Ed/o-app-header/issues",
     "supportStatus": "experimental",
+    "browserFeatures": {
+        "required": [
+            "WeakMap",
+            "classlist",
+            "createevent"
+        ]
+    },
     "demos": [
         {
             "path": "/demos/demo.html",
