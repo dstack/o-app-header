@@ -130,7 +130,7 @@ var AppHeader = {
 		}
 
 		function handleSessionStateKnown(e) {
-			if (session.hasValidSession()) {
+			if (session.hasValidSession() === session.Success) {
 				// TODO: get username from profile
 				setState('signed-in');
 			} else {

@@ -17,6 +17,10 @@ describe('AppHeader', function () {
 			hasValidSession: function (gracePeriodSeconds) {},
 			on: function (eventType, handler) {},
 			off: function (eventType, handler) {},
+			// Events
+			SessionStateKnownEvent: 'sessionstateknown',
+			LoginEvent: 'login',
+			LogoutEvent: 'logout',
 			// States
 			Success: 'success',
 			NoToken: 'notoken',
@@ -181,6 +185,40 @@ describe('AppHeader', function () {
 
 		it('should be in the signed out state when the session state is NoToken', function () {
 			sandbox.stub(session, 'hasValidSession').returns(session.NoToken);
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-out')).to.be(true);
+		});
+
+		it('should be in the signed in state when a session SessionStateKnownEvent is emitted and session state is Success', function () {
+			sandbox.stub(session, 'hasValidSession').returns(session.Success);
+			sandbox.stub(session, 'on').withArgs(session.SessionStateKnownEvent).yields();
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-in')).to.be(true);
+		});
+
+		it('should be in the signed in state when a session SessionStateKnownEvent is emitted and session state is Success', function () {
+			sandbox.stub(session, 'hasValidSession').returns(session.NoSession);
+			sandbox.stub(session, 'on').withArgs(session.SessionStateKnownEvent).yields();
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-out')).to.be(true);
+		});
+
+		it('should be in the signed in state when a session LoginEvent is emitted', function () {
+			sandbox.stub(session, 'on').withArgs(session.LoginEvent).yields();
+			AppHeader.init();
+			var headerEl = getHeaderEl();
+
+			expect(isHeaderInState(headerEl, 'signed-in')).to.be(true);
+		});
+
+		it('should be in the signed out state when a session LogoutEvent is emitted', function () {
+			sandbox.stub(session, 'on').withArgs(session.LogoutEvent).yields();
 			AppHeader.init();
 			var headerEl = getHeaderEl();
 
