@@ -1,6 +1,8 @@
 /*global module*/
 'use strict';
 
+var istanbul = require('browserify-istanbul');
+
 module.exports = function(config) {
 	config.set({
 
@@ -36,7 +38,14 @@ module.exports = function(config) {
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ['progress'],
+		reporters: ['progress', 'coverage'],
+		
+		coverageReporter: {
+			dir : 'build/reports/coverage',
+			reporters: [
+				{type: 'lcovonly', subdir: '.', file:'coverage.lcov'}
+			]
+		},
 
 
 		// web server port
@@ -67,7 +76,9 @@ module.exports = function(config) {
 
 		browserify: {
 			debug: true,
-			transform: [ 'debowerify' ]
+			transform: [ 'debowerify', istanbul({
+				ignore: ['node_modules/**', 'test/**']
+			})]
 		}
 
 	});
