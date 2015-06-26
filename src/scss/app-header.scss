@@ -9,3 +9,11 @@ $o-icons-path: '/bower_components/o-icons/assets/';
 .o-app-header {
 	font-family: oFontsGetFontFamilyWithFallbacks(HelveticaNeue);
 }
+
+.o-app-header__toggle {
+	margin-top: ($o-header-height - $o-app-header-toggle-font-size) / 2;
+
+	.oc-icon-menu {
+		font-size: $o-app-header-toggle-font-size;
+	}
+}

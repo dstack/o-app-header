@@ -38,10 +38,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		TimedOut: 'timedout'
 	};
 
+	window.userProfile = {
+		fetch: function (callback) { return callback(null, { me: { profile: { firstName: 'John', lastName: 'Doe' } } }); }
+	};
+
 	var configEl = document.createElement('script');
 	configEl.setAttribute('data-o-app-header-config', '');
 	configEl.type = 'application/json';
-	configEl.innerHTML = JSON.stringify({ session: 'session' });
+	configEl.innerHTML = JSON.stringify({ session: 'session', userProfile: 'userProfile' });
 	document.head.appendChild(configEl);
 
 	document.dispatchEvent(new CustomEvent('o.DOMContentLoaded'));

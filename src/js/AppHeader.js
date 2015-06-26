@@ -4,6 +4,8 @@ var Collapse = require('o-collapse');
 var DropdownMenu = require('o-dropdown-menu');
 var assign = require('object-assign/index');
 var forEach = require('./utils').forEach;
+var get = require('./utils').get;
+var UserProfile = require('./UserProfile');
 
 var AppHeader = {
 
@@ -28,7 +30,11 @@ var AppHeader = {
 
 		var settings = getSettings();
 		var session = (typeof settings.session === 'string') ? window[settings.session] : settings.session;
+		var userProfile = (typeof settings.userProfile === 'string') ?
+			window[settings.userProfile]
+			: (settings.userProfile || new UserProfile({ baseUrl: settings.consoleBaseUrl, session: session }));
 		var headerEl = constructHeaderEl();
+		var usernameEl = headerEl.querySelector('.o-app-header__username');
 
 		setState('initializing');
 		initSession();
@@ -86,6 +92,10 @@ var AppHeader = {
 			return headerEl;
 		}
 
+		function setUsername(username) {
+			usernameEl.textContent = username;
+		}
+
 		function setState(state) {
 			var selector = '[data-show="state:signed-in"],[data-show="state:signed-out"]';
 			var elements = headerEl.querySelectorAll(selector);
@@ -131,16 +141,24 @@ var AppHeader = {
 
 		function handleSessionStateKnown(e) {
 			if (session.hasValidSession() === session.Success) {
-				// TODO: get username from profile
-				setState('signed-in');
+				userProfile.fetch(function (error, userProfile) {
+					if (!error) {
+						setUsername(get(userProfile, 'me.profile.firstName'));
+						setState('signed-in');
+					}
+				});
 			} else {
 				setState('signed-out');
 			}
 		}
 
 		function handleSessionLogin(e) {
-			// TODO: get username from profile
-			setState('signed-in');
+			userProfile.fetch(function (error, userProfile) {
+				if (!error) {
+					setUsername(get(userProfile, 'me.profile.firstName'));
+					setState('signed-in');
+				}
+			});
 		}
 
 		function handleSessionLogout(e) {

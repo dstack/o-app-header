@@ -7,10 +7,11 @@ var AppHeader = require('../src/js/AppHeader');
 
 describe('AppHeader', function () {
 
-	var sandbox, session;
+	var sandbox, session, userProfile;
 
 	before(function () {
 		sandbox = sinon.sandbox.create();
+
 		session = window.session = {
 			login: function (redirectUrl) {},
 			logout: function (redirectUrl) {},
@@ -28,10 +29,14 @@ describe('AppHeader', function () {
 			Unknown: 'unknown'
 		};
 
+		userProfile = window.userProfile = {
+			fetch: function (callback) {}
+		};
+
 		var configEl = document.createElement('script');
 		configEl.setAttribute('data-o-app-header-config', '');
 		configEl.type = 'application/json';
-		configEl.innerHTML = JSON.stringify({ session: 'session' });
+		configEl.innerHTML = JSON.stringify({ session: 'session', userProfile: 'userProfile' });
 		document.head.appendChild(configEl);
 	});
 
@@ -130,6 +135,10 @@ describe('AppHeader', function () {
 	});
 
 	describe('session', function () {
+
+		beforeEach(function () {
+			sandbox.stub(userProfile, 'fetch').yields(null, { me: { profile: { firstName: 'John' } } });
+		});
 
 		it('should sign the user in when the Sign In nav item is clicked', function (done) {
 			AppHeader.init();
