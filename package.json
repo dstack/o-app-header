@@ -1,11 +1,14 @@
 {
   "private": true,
+  "name": "o-header",
+  "version": "0.1.0",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start karma.conf.js"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
     "debowerify": "Financial-Times/debowerify",
+    "browserify-istanbul": "^0.2.1",
     "karma": "^0.12.31",
     "karma-browserify": "^4.0.0",
     "karma-mocha": "^0.1.10",
