@@ -41,11 +41,11 @@ module.exports = function(config) {
 		reporters: ['progress', 'coverage'],
 
 		coverageReporter: {
-+			dir : 'build/reports/coverage',
-+			reporters: [
-+				{type: 'lcovonly', subdir: '.', file:'coverage.lcov'}
-+			]
-+		},
+			dir : 'build/reports/coverage',
+			reporters: [
+				{type: 'lcovonly', subdir: '.', file:'coverage.lcov'}
+			]
+		},
 
 
 		// web server port
@@ -77,8 +77,8 @@ module.exports = function(config) {
 		browserify: {
 			debug: true,
 			transform: [ 'debowerify', istanbul({
-+				ignore: ['node_modules/**', 'test/**']
-+			})]
+				ignore: ['node_modules/**', 'test/**']
+			})]
 		}
 
 	});
